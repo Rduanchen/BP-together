@@ -1,0 +1,29 @@
+{
+  "name": "bp-together",
+  "version": "1.0.0",
+  "description": "a application for record the blood pressure and share with other family member",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "npm run build-frontend && npm run build-backend",
+    "build-frontend": "cd frontend && npm install && npm run build",
+    "build-backend": "cd backend && npm install && npm run build",
+    "start": "cd backend && node dist/server.js",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "deploy": "npm run build && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rduanchen/BP-together.git"
+  },
+  "author": "Rduan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rduanchen/BP-together/issues"
+  },
+  "homepage": "https://github.com/Rduanchen/BP-together#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

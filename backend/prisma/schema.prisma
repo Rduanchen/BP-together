@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ... existing User model updates ...
+model User {
+  id              String                @id @default(uuid())
+  firebaseUid     String                @unique
+  email           String                @unique
+  name            String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  records         BloodPressureRecord[]
+  settings        NotificationSetting?
+  deviceTokens    DeviceToken[]
+  termsAcceptedAt DateTime? // Time when user accepted ToS
+  
+  // Sharing relationships
+  sharedWithMe    SharedAccess[]        @relation("SharedWithMe")
+  sharedByMe      SharedAccess[]        @relation("SharedByMe")
+  shareCodes      ShareCode[]
+}
+
+model BloodPressureRecord {
+  id            String   @id @default(uuid())
+  systolic      Int      // 收縮壓
+  diastolic     Int      // 舒張壓
+  pulse         Int      // 脈搏
+  recordedAt    DateTime @default(now()) // 用戶記錄的時間
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model NotificationSetting {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id])
+  
+  // Alert Thresholds (Null = Disabled)
+  sysHighAlert    Int?
+  sysLowAlert     Int?
+  diaHighAlert    Int?
+  diaLowAlert     Int?
+  pulseHighAlert  Int?
+  pulseLowAlert   Int?
+  
+  // Warning Thresholds
+  sysHighWarn     Int?
+  sysLowWarn      Int?
+  diaHighWarn     Int?
+  diaLowWarn      Int?
+  pulseHighWarn   Int?
+  pulseLowWarn    Int?
+
+  // Reminder
+  reminderEnabled Boolean @default(false)
+  reminderTime    String? // HH:MM
+  dailyTarget     Int     @default(1)
+}
+
+model SharedAccess {
+  id        String   @id @default(uuid())
+  sharerId  String
+  viewerId  String
+  role      Role     @default(VIEWER) // VIEWER, EDITOR
+  notificationsEnabled Boolean @default(true)
+  sharer    User     @relation("SharedByMe", fields: [sharerId], references: [id])
+  viewer    User     @relation("SharedWithMe", fields: [viewerId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([sharerId, viewerId])
+}
+
+model ShareCode {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model DeviceToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  platform  String   // web, android, ios
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  VIEWER
+  EDITOR
+}
