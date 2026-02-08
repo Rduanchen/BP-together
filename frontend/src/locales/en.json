@@ -3,7 +3,9 @@
         "title": "BP Together",
         "subtitle": "Sign in to access your records",
         "slogen": "Simple, Caring",
-        "googleSignIn": "Sign in with Google"
+        "googleSignIn": "Sign in with Google",
+        "loginFailed": "Login failed",
+        "pleaseTryAgain": "usually refresh this page can fix the issue"
     },
     "common": {
         "loading": "Loading...",

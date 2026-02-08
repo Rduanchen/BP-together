@@ -3,7 +3,9 @@
         "title": "血壓好幫手",
         "subtitle": "登入以存取您的紀錄",
         "slogen": "簡單，關懷",
-        "googleSignIn": "使用 Google 登入"
+        "googleSignIn": "使用 Google 登入",
+        "loginFailed": "登入失敗",
+        "pleaseTryAgain": "請再試一次，通常這可以解決這個錯誤"
     },
     "common": {
         "loading": "載入中...",

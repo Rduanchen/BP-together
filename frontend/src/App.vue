@@ -6,8 +6,8 @@ import TermsModal from "./components/TermsModal.vue";
 const authStore = useAuthStore();
 const showTerms = ref(false);
 
-watch(() => [authStore.user, authStore.isAuthReady], () => {
-  if (authStore.user && !authStore.user.termsAcceptedAt) {
+watch(() => [authStore.user, authStore.isAuthReady, authStore.isUserSynced], () => {
+  if (authStore.user && authStore.isUserSynced && !authStore.user.termsAcceptedAt) {
     showTerms.value = true;
   } else {
     showTerms.value = false;

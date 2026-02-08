@@ -13,9 +13,11 @@ export const useAuthStore = defineStore('auth', () => {
     const idToken = ref<string | null>(null);
     const targetUserId = ref<string | null>(null);
     const isAuthReady = ref(false);
+    const isUserSynced = ref(false);
 
     const login = async () => {
         try {
+            isUserSynced.value = false;
             await setPersistence(auth, browserLocalPersistence);
             const result = await signInWithPopup(auth, googleProvider);
             // We set the firebase user first
@@ -24,11 +26,13 @@ export const useAuthStore = defineStore('auth', () => {
 
             // Sync with backend to get DB fields like termsAcceptedAt
             await syncUser();
+            isUserSynced.value = true;
         } catch (error) {
             console.error('Login failed:', error);
             throw error;
         }
     };
+
 
     const logout = async () => {
         try {
@@ -36,6 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = null;
             idToken.value = null;
             targetUserId.value = null;
+            isUserSynced.value = false;
         } catch (error) {
             console.error('Logout failed:', error);
         }
@@ -49,9 +54,11 @@ export const useAuthStore = defineStore('auth', () => {
                     idToken.value = await currentUser.getIdToken();
                     // Sync on init to ensure we have latest DB state
                     await syncUser();
+                    isUserSynced.value = true;
                 } else {
                     user.value = null;
                     idToken.value = null;
+                    isUserSynced.value = false;
                 }
                 isAuthReady.value = true;
                 resolve();
@@ -113,6 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
         idToken,
         targetUserId,
         isAuthReady,
+        isUserSynced,
         login,
         logout,
         initAuth,

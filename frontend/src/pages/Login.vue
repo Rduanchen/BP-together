@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-
+import { useI18n } from 'vue-i18n';
 const authStore = useAuthStore();
 const router = useRouter();
+const { t } = useI18n();
 
 const handleLogin = async () => {
   try {
     await authStore.login();
     router.push('/');
-  } catch (error) {
-    alert('Login failed. Please check your console.');
+  } catch (error: any) {
+    console.error('Login error details:', error);
+    alert(`${t('login.loginFailed')}\n${t('login.pleaseTryAgain')}，`);
   }
 }
+
 </script>
 
 <template>
